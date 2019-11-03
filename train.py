@@ -42,6 +42,7 @@ def main():
                         help='Number of training epochs.')
     parser.add_argument('--batch_size', default=128, type=int,
                         help='Size of a training mini-batch.')
+    parser.add_argument('--shard_size', default=128, type=int)
     parser.add_argument('--word_dim', default=300, type=int,
                         help='Dimensionality of the word embedding.')
     parser.add_argument('--embed_size', default=1024, type=int,
@@ -206,9 +207,9 @@ def validate(opt, val_loader, model):
 
     start = time.time()
     if opt.cross_attn == 't2i':
-        sims = shard_xattn_t2i(img_embs, cap_embs, cap_lens, opt, shard_size=128)
+        sims = shard_xattn_t2i(img_embs, cap_embs, cap_lens, opt, shard_size=opt.shard_size)
     elif opt.cross_attn == 'i2t':
-        sims = shard_xattn_i2t(img_embs, cap_embs, cap_lens, opt, shard_size=128)
+        sims = shard_xattn_i2t(img_embs, cap_embs, cap_lens, opt, shard_size=opt.shard_size)
     else:
         raise NotImplementedError
     end = time.time()
