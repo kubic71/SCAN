@@ -200,15 +200,18 @@ def train(opt, train_loader, model, epoch, val_loader):
 
 def validate(opt, val_loader, model):
     # compute the encoding for all the validation images and captions
+    print("encoda data")
     img_embs, cap_embs, cap_lens = encode_data(
         model, val_loader, opt.log_step, logging.info)
 
+    print("emg_embs")
     img_embs = numpy.array([img_embs[i] for i in range(0, len(img_embs), 5)])
 
     start = time.time()
     if opt.cross_attn == 't2i':
         sims = shard_xattn_t2i(img_embs, cap_embs, cap_lens, opt, shard_size=opt.shard_size)
     elif opt.cross_attn == 'i2t':
+        print("shard_xattn")
         sims = shard_xattn_i2t(img_embs, cap_embs, cap_lens, opt, shard_size=opt.shard_size)
     else:
         raise NotImplementedError
